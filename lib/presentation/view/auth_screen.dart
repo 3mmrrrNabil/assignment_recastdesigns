@@ -61,7 +61,6 @@ class _AuthScreenState extends State<AuthScreen> {
     _confirmController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
