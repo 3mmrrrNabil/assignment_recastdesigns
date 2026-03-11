@@ -17,12 +17,12 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-
   final _formKey = GlobalKey<FormState>();
-
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
+
+  final ScrollController _scrollController = ScrollController();
 
   void _submitForm(AuthCubit cubit) {
     if (_formKey.currentState!.validate()) {
@@ -32,33 +32,61 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.black,
-
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
-
           final cubit = context.read<AuthCubit>();
 
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _scrollToBottom();
+          });
+
           return SingleChildScrollView(
+            controller: _scrollController,
             child: Column(
               children: [
-
-                 InfiniteMovingImages(),
-
+                InfiniteMovingImages(),
                 const AuthHeader(),
-
                 SizedBox(height: context.hp(4)),
 
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 500),
                   transitionBuilder: (child, animation) {
-
                     final offsetAnimation = Tween<Offset>(
-                      begin: const Offset(0, .2),
+                      begin: const Offset(0, 0.2),
                       end: Offset.zero,
                     ).animate(animation);
 
@@ -70,30 +98,24 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                     );
                   },
-
                   child: state is SignInState
-
                       ? SignInSection(
                     key: const ValueKey(AppValues.signIn),
-
                     cubit: cubit,
                   )
-
                       : SignUpSection(
                     key: const ValueKey(AppValues.signUp),
-
                     cubit: cubit,
                     state: state,
-
                     formKey: _formKey,
-
                     emailController: _emailController,
                     passwordController: _passwordController,
                     confirmController: _confirmController,
-
                     submitForm: _submitForm,
                   ),
                 ),
+
+                SizedBox(height: context.hp(5)),
               ],
             ),
           );
