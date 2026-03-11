@@ -2,4 +2,4 @@
 
 ## 📲 تحميل التطبيق  
 for andriod :
-https://drive.google.com/file/d/1x5XK6LjJpl2Eni7z8t-f8_VTPXECh2QC/view?usp=drive_link
+https://drive.google.com/file/d/1dp0BMYA7R51EiR6Xw5zjppoTJXt9GSnp/view?usp=drive_link
